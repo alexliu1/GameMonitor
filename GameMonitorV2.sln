@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameMonitorV2", "GameMonitorV2\GameMonitorV2.csproj", "{BE5A5F7A-7683-44CE-B014-09FAB0BA074D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameMonV2Test", "GameMonV2Test\GameMonV2Test.csproj", "{EAA85A03-6F6A-4463-AB68-33CF972859A6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BE5A5F7A-7683-44CE-B014-09FAB0BA074D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE5A5F7A-7683-44CE-B014-09FAB0BA074D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE5A5F7A-7683-44CE-B014-09FAB0BA074D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE5A5F7A-7683-44CE-B014-09FAB0BA074D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAA85A03-6F6A-4463-AB68-33CF972859A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAA85A03-6F6A-4463-AB68-33CF972859A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAA85A03-6F6A-4463-AB68-33CF972859A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAA85A03-6F6A-4463-AB68-33CF972859A6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
