@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using GameMonitorV2.Annotations;
@@ -10,6 +12,9 @@ namespace GameMonitorV2.View
 {
     public class GameMonitorDisplayViewModel : INotifyPropertyChanged
     {
+        //private static TimeSpan TimeLimit = TimeSpan.FromHours(3);
+        private static TimeSpan TimeLimit = TimeSpan.FromSeconds(10);
+        public event Action TimeExpired; 
         private readonly ISynchronizeInvoke synchronizeInvoke;
         private string gameName;
         private TimeSpan elapsedTime;
@@ -28,6 +33,7 @@ namespace GameMonitorV2.View
                 if (value == elapsedTime)
                     return;
                 elapsedTime = value;
+                if (value >= TimeLimit && TimeExpired != null) TimeExpired();
                 OnPropertyChanged();
             }
         }
@@ -55,6 +61,13 @@ namespace GameMonitorV2.View
             else
                 if (PropertyChanged != null)
                     PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void CloseProgram()
+        {
+            if (GameName == null) return;
+            var program = Process.GetProcessesByName(GameName).First();
+            program.Kill();
         }
     }
 }
