@@ -45,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\PollWatcher.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ViewModel\GameMonitorDisplayViewModel.cs" />
     <Compile Include="View\GameMonitorForm.cs">
       <SubType>Form</SubType>
     </Compile>

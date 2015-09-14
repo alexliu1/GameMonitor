@@ -31,6 +31,8 @@ namespace GameMonitorV2.Model
                 return;
 
             elapsedTime += interval;
+
+            if (ElapsedTimeTick != null) ElapsedTimeTick();
         }
 
         private bool ProcessExists()
@@ -42,5 +44,7 @@ namespace GameMonitorV2.Model
         {
             get { return TimeSpan.FromMilliseconds(elapsedTime).ToString(); }
         }
+
+        public event Action ElapsedTimeTick;
     }
 }

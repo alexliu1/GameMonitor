@@ -45,8 +45,9 @@
             this.mainPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.mainPanel.Location = new System.Drawing.Point(0, 0);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(314, 141);
+            this.mainPanel.Size = new System.Drawing.Size(337, 141);
             this.mainPanel.TabIndex = 0;
+            this.mainPanel.WrapContents = false;
             // 
             // flowLayoutPanel2
             // 
@@ -80,12 +81,13 @@
             // chooseGameDialog
             // 
             this.chooseGameDialog.FileName = "notepad";
+            this.chooseGameDialog.Filter = "Executable Files (*.exe)|*.exe";
             // 
             // GameMonitorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(314, 141);
+            this.ClientSize = new System.Drawing.Size(337, 141);
             this.Controls.Add(this.mainPanel);
             this.Name = "GameMonitorForm";
             this.Text = "GameMonitor v.2";

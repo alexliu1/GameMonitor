@@ -1,24 +1,24 @@
 ﻿using System.Windows.Forms;
+using GameMonitorV2.ViewModel;
 
 namespace GameMonitorV2.View
 {
     public partial class GameMonitorDisplay : UserControl
     {
-        public string GameName { get; set; }
-        public string RunningTime { get; set; }
-
-        public GameMonitorDisplay()
+        public GameMonitorDisplay(string fileNameAndPath)
         {
             InitializeComponent();
 
-            BindLabelToProperties();
+            var gameMonitorDisplayViewModel = new GameMonitorDisplayViewModel(this, fileNameAndPath);
+
+            BindLabelToProperties(gameMonitorDisplayViewModel);
         }
 
-        private void BindLabelToProperties()
+        private void BindLabelToProperties(GameMonitorDisplayViewModel gameMonitorDisplayViewModel)
         {
-            var gameNameBinding = new Binding("Text", this, "GameName");
+            var gameNameBinding = new Binding("Text", gameMonitorDisplayViewModel, "GameName");
             labelGame.DataBindings.Add(gameNameBinding);
-            var runningTimeBinding = new Binding("Text", this, "RunningTime");
+            var runningTimeBinding = new Binding("Text", gameMonitorDisplayViewModel, "ElapsedTime");
             labelTime.DataBindings.Add(runningTimeBinding);
         }
     }

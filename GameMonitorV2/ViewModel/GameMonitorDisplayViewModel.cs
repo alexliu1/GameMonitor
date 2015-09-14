@@ -1,17 +1,16 @@
-﻿using System;
+using System;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
 using GameMonitorV2.Annotations;
 using GameMonitorV2.Model;
-using GameMonitorV2.View;
 
-namespace GameMonitorV2.ViewModel
+namespace GameMonitorV2.View
 {
-    public class GameMonitorFormViewModel : INotifyPropertyChanged
+    public class GameMonitorDisplayViewModel : INotifyPropertyChanged
     {
-        private ISynchronizeInvoke synchronizeInvoke;
+        private readonly ISynchronizeInvoke synchronizeInvoke;
         private string gameName;
         private TimeSpan elapsedTime;
 
@@ -24,29 +23,27 @@ namespace GameMonitorV2.ViewModel
         public TimeSpan ElapsedTime
         {
             get { return elapsedTime; }
-            set 
-            { 
+            set
+            {
                 if (value == elapsedTime)
                     return;
                 elapsedTime = value;
                 OnPropertyChanged();
             }
         }
-
-
-        public GameMonitorFormViewModel(ISynchronizeInvoke synchronizeInvoke)
+        public GameMonitorDisplayViewModel(ISynchronizeInvoke synchronizeInvoke, string fileNameAndPath)
         {
             this.synchronizeInvoke = synchronizeInvoke;
-            LoadGameToBeMonitored();
+
+            LoadGameToBeMonitored(fileNameAndPath);
         }
 
-        public void LoadGameToBeMonitored()
+        private void LoadGameToBeMonitored(string fileNameAndPath)
         {
-            if (GameName == null) return;
+            GameName = Path.GetFileNameWithoutExtension(fileNameAndPath);
             var watchingGame = new PollWatcher(GameName);
             watchingGame.ElapsedTimeTick += () => { ElapsedTime = watchingGame.ElapsedTime; };
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 

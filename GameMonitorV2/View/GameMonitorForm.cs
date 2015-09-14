@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.IO;
+using System.Windows.Forms;
 using GameMonitorV2.ViewModel;
 
 namespace GameMonitorV2.View
@@ -12,15 +13,19 @@ namespace GameMonitorV2.View
             var gameMonitorFormViewModel = new GameMonitorFormViewModel(this);
 
             buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(gameMonitorFormViewModel);
-            
+
         }
 
         private void LoadMonitoringDisplay(GameMonitorFormViewModel gameMonitorFormViewModel)
         {
-            
-            var display = new GameMonitorDisplay();
-            mainPanel.Controls.Add(display);
+            if (chooseGameDialog.ShowDialog() != DialogResult.OK) 
+                return;
 
+            //gameMonitorFormViewModel.GameName = Path.GetFileNameWithoutExtension(chooseGameDialog.FileName);
+            //gameMonitorFormViewModel.LoadGameToBeMonitored();
+
+            var display = new GameMonitorDisplay(chooseGameDialog.FileName);
+            mainPanel.Controls.Add(display);
         }
     }
 }
