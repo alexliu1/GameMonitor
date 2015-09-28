@@ -40,11 +40,6 @@ namespace GameMonitorV2.Model
             return Process.GetProcessesByName(ProcessName).Any();
         }
 
-        public string GetFormattedElapsedTime
-        {
-            get { return TimeSpan.FromMilliseconds(elapsedTime).ToString(); }
-        }
-
         public event Action ElapsedTimeTick;
     }
 }

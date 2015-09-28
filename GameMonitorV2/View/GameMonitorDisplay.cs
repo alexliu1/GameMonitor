@@ -1,14 +1,12 @@
 ﻿using System.Drawing;
-using System.Linq.Expressions;
 using System.Media;
 using System.Windows.Forms;
-using GameMonitorV2.ViewModel;
 
 namespace GameMonitorV2.View
 {
     public partial class GameMonitorDisplay : UserControl
     {
-        private static bool soundPlayed ;
+        private bool soundPlayed ;
 
         public GameMonitorDisplay(string fileNameAndPath)
         {
@@ -17,30 +15,38 @@ namespace GameMonitorV2.View
             var gameMonitorDisplayViewModel = new GameMonitorDisplayViewModel(this, fileNameAndPath);
 
             BindLabelToProperties(gameMonitorDisplayViewModel);
-            SubscribeToTimeExpirationEvent(gameMonitorDisplayViewModel);
+            SubscribeToTimeExpired(gameMonitorDisplayViewModel);
+            SubscribeToButtonCloseClick(gameMonitorDisplayViewModel);
+        }
+
+        private void SubscribeToTimeExpired(GameMonitorDisplayViewModel gameMonitorDisplayViewModel)
+        {
+            gameMonitorDisplayViewModel.TimeExpired += HandleTimeExpired;
+        }
+
+        private void SubscribeToButtonCloseClick(GameMonitorDisplayViewModel gameMonitorDisplayViewModel)
+        {
+            buttonClose.Click += (sender, args) =>
+            {
+                gameMonitorDisplayViewModel.CloseProgram();
+                ResetAttributes();
+            };
         }
 
         private void BindLabelToProperties(GameMonitorDisplayViewModel gameMonitorDisplayViewModel)
         {
             var gameNameBinding = new Binding("Text", gameMonitorDisplayViewModel, "GameName");
             labelGame.DataBindings.Add(gameNameBinding);
+            
             var runningTimeBinding = new Binding("Text", gameMonitorDisplayViewModel, "ElapsedTime");
             labelTime.DataBindings.Add(runningTimeBinding);
         }
 
-        private void SubscribeToTimeExpirationEvent(GameMonitorDisplayViewModel gameMonitorDisplayViewModel)
+        private void HandleTimeExpired()
         {
-            gameMonitorDisplayViewModel.TimeExpired += () =>
-            {
-                OnButtonPropertyChange();
-                OnLabelColorChange();
-                PlayTimeExpiredWarningSound();
-            };
-            buttonClose.Click += (sender, args) =>
-            {
-                gameMonitorDisplayViewModel.CloseProgram();
-                ResetAttributes();
-            };
+            EnableCloseButton();
+            ShowTimeInRed();
+            PlayTimeExpiredWarningSound();
         }
 
         private void ResetAttributes()
@@ -50,35 +56,23 @@ namespace GameMonitorV2.View
             buttonClose.Enabled = false;
         }
 
-        private static void PlayTimeExpiredWarningSound()
+        private void PlayTimeExpiredWarningSound()
         {
-            if (soundPlayed) return;
+            if (soundPlayed) 
+                return;
+            
             SystemSounds.Exclamation.Play();
             soundPlayed = true;
         }
 
-        private void OnLabelColorChange()
+        private void ShowTimeInRed()
         {
-            if (labelTime.InvokeRequired)
-            {
-                this.Invoke(new MethodInvoker(OnLabelColorChange), null);
-            }
-            else
-            {
-                labelTime.ForeColor = Color.Red;
-            }
+            labelTime.ForeColor = Color.Red;
         }
 
-        private void OnButtonPropertyChange()
+        private void EnableCloseButton()
         {
-            if (buttonClose.InvokeRequired)
-            {
-                this.Invoke(new MethodInvoker(OnButtonPropertyChange), null);
-            }
-            else
-            {
-                buttonClose.Enabled = true;
-            }
+            buttonClose.Enabled = true;
         }
     }
 }

@@ -32,11 +32,13 @@ namespace GameMonitorV2.View
             {
                 if (value == elapsedTime)
                     return;
+                
                 elapsedTime = value;
-                if (value >= TimeLimit && TimeExpired != null) TimeExpired();
                 OnPropertyChanged();
+                RaiseTimeExpiredIfNecessary(value);    
             }
         }
+
         public GameMonitorDisplayViewModel(ISynchronizeInvoke synchronizeInvoke, string fileNameAndPath)
         {
             this.synchronizeInvoke = synchronizeInvoke;
@@ -51,16 +53,27 @@ namespace GameMonitorV2.View
             watchingGame.ElapsedTimeTick += () => { ElapsedTime = watchingGame.ElapsedTime; };
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        private void RaiseTimeExpiredIfNecessary(TimeSpan value)
+        {
+            if (value >= TimeLimit && TimeExpired != null)
+                RaiseOnUiThread(() => TimeExpired());
+        }
 
-        [NotifyPropertyChangedInvocator]
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        //[NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
+            MethodInvoker methodToRaise = () => PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            RaiseOnUiThread(methodToRaise);
+        }
+
+        private void RaiseOnUiThread(MethodInvoker methodToRaise)
+        {
             if (synchronizeInvoke.InvokeRequired)
-                synchronizeInvoke.BeginInvoke(new MethodInvoker(() => OnPropertyChanged(propertyName)), null);
+                synchronizeInvoke.BeginInvoke(methodToRaise, null);
             else
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                methodToRaise();
         }
 
         public void CloseProgram()
