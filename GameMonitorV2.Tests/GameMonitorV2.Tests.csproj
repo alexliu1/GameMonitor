@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameMonitorDisplayViewModelTests.cs" />
-    <Compile Include="GameMonitorFormViewModelTests.cs" />
+    <Compile Include="PollWatcher3Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

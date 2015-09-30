@@ -1,15 +1,19 @@
 ﻿using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
+using GameMonitorV2.ViewModel;
 
 namespace GameMonitorV2.View
 {
     public partial class GameMonitorDisplay : UserControl
     {
         private bool soundPlayed ;
+        public string FileName { get; private set; }
 
         public GameMonitorDisplay(string fileNameAndPath)
         {
+            FileName = fileNameAndPath;
+
             InitializeComponent();
 
             var gameMonitorDisplayViewModel = new GameMonitorDisplayViewModel(this, fileNameAndPath);

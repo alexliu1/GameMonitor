@@ -5,10 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
-using GameMonitorV2.Annotations;
 using GameMonitorV2.Model;
 
-namespace GameMonitorV2.View
+namespace GameMonitorV2.ViewModel
 {
     public class GameMonitorDisplayViewModel : INotifyPropertyChanged
     {
