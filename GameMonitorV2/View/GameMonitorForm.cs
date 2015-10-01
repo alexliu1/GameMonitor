@@ -26,7 +26,16 @@ namespace GameMonitorV2.View
             var display = new GameMonitorDisplay(chooseGameDialog.FileName);
             mainPanel.Controls.Add(display);
 
+            //// Approach 2:
+            //var filePicker = new FilePicker(gameMonitorFormViewModel.GetFilePickerViewModel());
+            //var gameName = filePicker.Show();
+
+            //if (gameMonitorFormViewModel.ShouldMonitor(gameName))
+            //    ShowGameMonitorDisplay();
+            //else
+
         }
+
 
         private bool CheckDuplicateMonitoring()
         {

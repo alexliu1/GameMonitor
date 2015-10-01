@@ -1,8 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading;
-using GameMonitorV2.View;
+using GameMonitorV2.Tests.Fakes;
 using GameMonitorV2.ViewModel;
 using Moq;
 using NUnit.Framework;
@@ -13,28 +14,70 @@ namespace GameMonitorV2.Tests
     public class GameMonitorDisplayViewModelTests
     {
         [Test]
-        public void WhenGameNameIsSet_ThenPropertyChangedIsRaisedCorrectly()
+        public void WhenGameNameIsSet_ThenPropertyChangedIsRaisedCorrectly_WhenInvokeIsRequired()
         {
             var propertyName = string.Empty;
-            var iSynchronizeInvoke = new Mock<ISynchronizeInvoke>() {CallBase = true};
-            iSynchronizeInvoke.Setup(m => m.InvokeRequired).Returns(false);
-            //iSynchronizeInvoke.Setup(m => m.BeginInvoke(It.IsAny<Delegate>(), It.IsAny<Object[]>())).Callback(() => It.IsAny<Delegate>());
+            var synchronizeInvoke = new FakeSynchronizeInvoke(true);
             
-            var unit = new GameMonitorDisplayViewModel(iSynchronizeInvoke.Object, "notepad.exe");
+            var unit = new GameMonitorDisplayViewModel(synchronizeInvoke, "notepad.exe");
             unit.PropertyChanged += (s,a) => { propertyName = a.PropertyName; };
+            
             unit.GameName = "notepad";
+            Assert.That(propertyName, Is.EqualTo("GameName"));
 
-            Assert.That(propertyName, Is.EqualTo("GameName")); 
+            unit.ElapsedTime = TimeSpan.FromSeconds(1);
+            Assert.That(propertyName, Is.EqualTo("ElapsedTime"));
         }
 
         [Test]
-        public void WhenRunningTimeIsSet_ThenPropertyChangedIsRaisedCorrectedly()
+        public void WhenGameNameIsSet_ThenPropertyChangedIsRaisedCorrectly_WhenInvokeIsNotRequired()
         {
             var propertyName = string.Empty;
-            var iSynchronizeInvoke = new Mock<ISynchronizeInvoke>() { CallBase = true };
-            iSynchronizeInvoke.Setup(m => m.InvokeRequired).Returns(false);
+            var synchronizeInvoke = new FakeSynchronizeInvoke(false);
+            
+            var unit = new GameMonitorDisplayViewModel(synchronizeInvoke, "notepad.exe");
+            unit.PropertyChanged += (s,a) => { propertyName = a.PropertyName; };
 
-            var unit = new GameMonitorDisplayViewModel(iSynchronizeInvoke.Object, "notepad.exe");
+            foreach (var property in typeof(GameMonitorDisplayViewModel).GetProperties())
+            {
+                property.SetValue(unit, GetValue(property.GetType()));
+                Assert.That(propertyName, Is.EqualTo(property.Name));
+            }
+        }
+
+        [Test]
+        public void WhenGameNameIsSet_ThenPropertyChangedIsRaisedCorrectlyWhenInvokeIsNotRequired()
+        {
+            var propertyName = string.Empty;
+            var synchronizeInvoke = new FakeSynchronizeInvoke(false);
+
+            var unit = new GameMonitorDisplayViewModel(synchronizeInvoke, "notepad.exe");
+            unit.PropertyChanged += (s, a) => { propertyName = a.PropertyName; };
+            unit.GameName = "notepad";
+
+            Assert.That(propertyName, Is.EqualTo("GameName"));
+        }
+
+        [Test]
+        public void WhenRunningTimeIsSet_ThenPropertyChangedIsRaisedCorrectedlyWhenInvokeIsRequired()
+        {
+            var propertyName = string.Empty;
+            var synchronizeInvoke = new FakeSynchronizeInvoke(false);
+
+            var unit = new GameMonitorDisplayViewModel(synchronizeInvoke, "notepad.exe");
+            unit.PropertyChanged += (s, a) => { propertyName = a.PropertyName; };
+            unit.ElapsedTime = TimeSpan.FromMilliseconds(1000);
+
+            Assert.That(propertyName, Is.EqualTo("ElapsedTime"));
+        }
+
+        [Test]
+        public void WhenRunningTimeIsSet_ThenPropertyChangedIsRaisedCorrectedlyWhenInvokeIsNotRequired()
+        {
+            var propertyName = string.Empty;
+            var synchronizeInvoke = new FakeSynchronizeInvoke(false);
+
+            var unit = new GameMonitorDisplayViewModel(synchronizeInvoke, "notepad.exe");
             unit.PropertyChanged += (s, a) => { propertyName = a.PropertyName; };
             unit.ElapsedTime = TimeSpan.FromMilliseconds(1000);
 

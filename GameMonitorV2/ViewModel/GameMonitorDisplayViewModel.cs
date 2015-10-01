@@ -21,7 +21,11 @@ namespace GameMonitorV2.ViewModel
         public string GameName
         {
             get { return gameName; }
-            set { gameName = value; OnPropertyChanged(); }
+            set
+            {
+                gameName = value;
+                OnPropertyChanged();
+            }
         }
 
         public TimeSpan ElapsedTime
