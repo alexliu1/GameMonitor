@@ -1,31 +1,37 @@
-﻿using System.Linq;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using GameMonitorV2.ViewModel;
 
 namespace GameMonitorV2.View
 {
     public partial class GameMonitorForm : Form
     {
-        private GameMonitorFormViewModel gameMonitorFormViewModel = new GameMonitorFormViewModel();
+        
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public GameMonitorForm()
         {
             InitializeComponent();
-            
-            buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay();
+
+            GameMonitorFormViewModel gameMonitorFormViewModel = new GameMonitorFormViewModel(log);
+
+            buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(gameMonitorFormViewModel);
         }
 
-        private void LoadMonitoringDisplay()
+        private void LoadMonitoringDisplay(GameMonitorFormViewModel gameMonitorFormViewModel)
         {
             if (chooseGameDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            //if (gameMonitorFormViewModel.CheckDuplicateMonitoring(chooseGameDialog.FileName)) return;
-            if (CheckDuplicateMonitoring()) return;
-
-            var display = new GameMonitorDisplay(chooseGameDialog.FileName);
-            mainPanel.Controls.Add(display);
-
+            if (gameMonitorFormViewModel.ShouldMonitor(chooseGameDialog.FileName))
+            {
+                var display = new GameMonitorDisplay(chooseGameDialog.FileName, log);
+                mainPanel.Controls.Add(display);
+            }
+            else
+            {
+                MessageBox.Show(@"Program is already being Monitored.");
+            }
             //// Approach 2:
             //var filePicker = new FilePicker(gameMonitorFormViewModel.GetFilePickerViewModel());
             //var gameName = filePicker.Show();
@@ -33,21 +39,6 @@ namespace GameMonitorV2.View
             //if (gameMonitorFormViewModel.ShouldMonitor(gameName))
             //    ShowGameMonitorDisplay();
             //else
-
-        }
-
-
-        private bool CheckDuplicateMonitoring()
-        {
-            //if process is already monitored then display message
-            if ((from Control panel in mainPanel.Controls
-                where panel.GetType() == typeof (GameMonitorDisplay)
-                select panel as GameMonitorDisplay).Any(item => item.FileName == chooseGameDialog.FileName))
-            {
-                MessageBox.Show(@"Program is already being Monitored.");
-                return true;
-            }
-            return false;
         }
     }
 }

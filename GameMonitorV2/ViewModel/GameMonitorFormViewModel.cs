@@ -1,22 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using log4net;
 
 namespace GameMonitorV2.ViewModel
 {
     public class GameMonitorFormViewModel
     {
         public List<string> MonitoredFiles { get; set; }
+        private ILog log;
 
-        public GameMonitorFormViewModel()
+        public GameMonitorFormViewModel(ILog log)
         {
+            this.log = log;
+
             MonitoredFiles = new List<string>();
         }
 
-        public bool CheckDuplicateMonitoring(string fileName)
+        public bool ShouldMonitor(string fileName)
         {
-            if (MonitoredFiles.All(monitoredFile => monitoredFile != fileName)) return true;
-            MonitoredFiles.Add(fileName);
-            return false;
+            if (MonitoredFiles.Any(monitoredFile => monitoredFile == fileName))
+            {
+                return false;
+            }
+            else
+            {
+                MonitoredFiles.Add(fileName);
+                return true;
+            }
         }
     }
 }

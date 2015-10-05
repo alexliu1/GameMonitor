@@ -2,6 +2,7 @@
 using System.Media;
 using System.Windows.Forms;
 using GameMonitorV2.ViewModel;
+using log4net;
 
 namespace GameMonitorV2.View
 {
@@ -9,14 +10,16 @@ namespace GameMonitorV2.View
     {
         private bool soundPlayed ;
         public string FileName { get; private set; }
+        private ILog log;
 
-        public GameMonitorDisplay(string fileNameAndPath)
+        public GameMonitorDisplay(string fileNameAndPath, ILog log)
         {
+            this.log = log;
             FileName = fileNameAndPath;
 
             InitializeComponent();
 
-            var gameMonitorDisplayViewModel = new GameMonitorDisplayViewModel(this, fileNameAndPath);
+            var gameMonitorDisplayViewModel = new GameMonitorDisplayViewModel(this, fileNameAndPath, log);
 
             BindLabelToProperties(gameMonitorDisplayViewModel);
             SubscribeToTimeExpired(gameMonitorDisplayViewModel);

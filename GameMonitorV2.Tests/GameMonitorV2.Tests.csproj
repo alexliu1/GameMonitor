@@ -48,7 +48,8 @@
   <ItemGroup>
     <Compile Include="Fakes\FakeSynchronizeInvoke.cs" />
     <Compile Include="GameMonitorDisplayViewModelTests.cs" />
-    <Compile Include="PollWatcher3Tests.cs" />
+    <Compile Include="GameMonitorFormViewModelTests.cs" />
+    <Compile Include="PollWatcherTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

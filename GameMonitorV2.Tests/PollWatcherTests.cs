@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace GameMonitorV2.Tests
 {
     [TestFixture]
-    public class PollWatcher3Tests
+    public class PollWatcherTests
     {
         [Test]
         public void CanAccuratelyMeasureElapsedTimeOfTwoSequentialProcesses()
