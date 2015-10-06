@@ -16,6 +16,12 @@ namespace ScratchProject
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            // Dependency injection
+            //Register.RegisterWithContainer();
+            //var gameMonitorForm = container.Get<IGameMonitorForm>();
+            //Application.Run(gameMonitorForm);
+            
             Application.Run(new GameMonitorForm());
         }
     }

@@ -83,18 +83,20 @@ namespace GameMonitorV2.ViewModel
                 methodToRaise();
         }
 
+        //public bool TryCloseProgram(out string errorMessage)
         public void CloseProgram()
         {
             if (GameName == null) return;
             var program = Process.GetProcessesByName(GameName).First();
-            log.Info(string.Format("Close Command sent to {0}", GameName));
+            log.InfoFormat("Closing process [{0}]", GameName);
+
             try
             {
                 program.Kill();
             }
             catch (Exception ex)
             {
-                log.Info(string.Format("Error during {0} closing", GameName), ex);
+                log.Error(string.Format("Error when closing [{0}]", GameName), ex);
             } 
         }
     }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using GameMonitorV2.Tests.Fakes;
 using GameMonitorV2.ViewModel;
+using log4net;
 using Moq;
 using NUnit.Framework;
 
@@ -17,8 +18,8 @@ namespace GameMonitorV2.Tests
         {
             var propertyName = string.Empty;
             var synchronizeInvoke = new FakeSynchronizeInvoke(true);
-            
-            var unit = new GameMonitorDisplayViewModel(synchronizeInvoke, "notepad.exe");
+
+            var unit = CreateUnit();
             unit.PropertyChanged += (s,a) => { propertyName = a.PropertyName; };
             
             unit.GameName = "notepad";
@@ -96,5 +97,20 @@ namespace GameMonitorV2.Tests
                     process.Kill();
             }
         }
+
+        private GameMonitorDisplayViewModel CreateUnit(ISynchronizeInvoke synchronizeInvoke = null, string processName = null, ILog logger = null)
+        {
+            if (synchronizeInvoke == null)
+                synchronizeInvoke = new Mock<ISynchronizeInvoke>().Object;
+
+            if (processName == null)
+                processName = "notepad.exe";
+
+            if (logger == null)
+                logger = new Mock<ILog>().Object;
+
+            return new GameMonitorDisplayViewModel(synchronizeInvoke, processName, logger);
+        }
+
     }
 }
