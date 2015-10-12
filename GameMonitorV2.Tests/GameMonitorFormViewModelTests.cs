@@ -1,6 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 using GameMonitorV2.Tests.Fakes;
 using GameMonitorV2.ViewModel;
+using log4net;
+using Moq;
 using NUnit.Framework;
 
 namespace GameMonitorV2.Tests
@@ -11,17 +14,20 @@ namespace GameMonitorV2.Tests
         [Test]
         public void WhenChoosingAProgramToMonitor()
         {
-            var propertyName = string.Empty;
-            var synchronizeInvoke = new FakeSynchronizeInvoke(true);
+            var unit = CreateUnit();
+            unit.ShouldMonitor("notepad.exe");
 
-            var unit = new GameMonitorDisplayViewModel(synchronizeInvoke, "notepad.exe");
-            unit.PropertyChanged += (s, a) => { propertyName = a.PropertyName; };
+            Assert.IsTrue(unit.ShouldMonitor("wordpad.exe"));
 
-            unit.GameName = "notepad";
-            Assert.That(propertyName, Is.EqualTo("GameName"));
+            Assert.IsFalse(unit.ShouldMonitor("notepad.exe"));
+        }
 
-            unit.ElapsedTime = TimeSpan.FromSeconds(1);
-            Assert.That(propertyName, Is.EqualTo("ElapsedTime"));
+        private GameMonitorFormViewModel CreateUnit(ILog logger = null)
+        {
+            if (logger == null)
+                logger = new Mock<ILog>().Object;
+
+            return new GameMonitorFormViewModel(logger);
         }
     }
 }

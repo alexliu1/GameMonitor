@@ -40,7 +40,8 @@ namespace GameMonitorV2.ViewModel
                 
                 elapsedTime = value;
                 OnPropertyChanged();
-                RaiseTimeExpiredIfNecessary(value);    
+                RaiseTimeExpiredIfNecessary(value);
+                log.Debug(string.Format("Process: [{0}] Running time: [{1}]", GameName, value));
             }
         }
 
@@ -57,7 +58,7 @@ namespace GameMonitorV2.ViewModel
             GameName = Path.GetFileNameWithoutExtension(fileNameAndPath);
             var watchingGame = new PollWatcher(GameName);
             watchingGame.ElapsedTimeTick += () => { ElapsedTime = watchingGame.ElapsedTime; };
-            log.Info(string.Format("Monitoring started on: {0}", GameName));
+            log.Info(string.Format("Monitoring process [{0}]", GameName));
         }
 
         private void RaiseTimeExpiredIfNecessary(TimeSpan value)

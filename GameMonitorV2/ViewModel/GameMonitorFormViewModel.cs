@@ -20,6 +20,7 @@ namespace GameMonitorV2.ViewModel
         {
             if (MonitoredFiles.Any(monitoredFile => monitoredFile == fileName))
             {
+                log.Debug(string.Format("Process [{0}] is already being monitored", fileName));
                 return false;
             }
             else
