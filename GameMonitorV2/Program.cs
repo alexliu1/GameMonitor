@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Windows.Forms;
+using Autofac;
 using GameMonitorV2.View;
+using GameMonitorV2.ViewModel;
+using log4net;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
-namespace ScratchProject
+namespace GameMonitorV2
 {
     static class Program
     {
@@ -17,12 +20,21 @@ namespace ScratchProject
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            //// Dependency injection
-            //Register.RegisterWithContainer();
-            //var gameMonitorForm = container.Get<IGameMonitorForm>();
-            //Application.Run(gameMonitorForm);
+            // Autofac registration
+            var builder = new ContainerBuilder();
+
+            builder.Register<Func<Type, ILog>>(c => LogManager.GetLogger);
+
+            builder.RegisterType<GameMonitorFormViewModel>().As<IGameMonitorFormViewModel>();
+            builder.RegisterType<GameMonitorForm>();
             
-            Application.Run(new GameMonitorForm());
+            var container = builder.Build();
+
+            //// Resolve main form
+            var gameMonitorForm = container.Resolve<GameMonitorForm>();
+            Application.Run(gameMonitorForm);
+            
+            //Application.Run(new GameMonitorForm());
         }
     }
 }

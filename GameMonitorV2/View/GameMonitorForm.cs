@@ -1,31 +1,40 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using GameMonitorV2.ViewModel;
+using log4net;
 
 namespace GameMonitorV2.View
 {
     public partial class GameMonitorForm : Form
     {
-        
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
-            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly IGameMonitorFormViewModel viewModel;
+        private readonly ILog logger;
+
+        //private static readonly log4net.ILog logger = log4net.LogManager.GetLogger
+        //    (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public GameMonitorForm()
         {
             InitializeComponent();
-
-            GameMonitorFormViewModel gameMonitorFormViewModel = new GameMonitorFormViewModel(log);
-
-            buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(gameMonitorFormViewModel);
         }
 
-        private void LoadMonitoringDisplay(GameMonitorFormViewModel gameMonitorFormViewModel)
+        public GameMonitorForm(IGameMonitorFormViewModel viewModel, Func<Type, ILog> loggerFactory) : this()
+        {
+            this.viewModel = viewModel;
+            this.logger = loggerFactory(typeof(GameMonitorForm));
+            //var gameMonitorFormViewModel = new GameMonitorFormViewModel(GameMonitorForm.logger);
+
+            buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(viewModel);
+        }
+
+        private void LoadMonitoringDisplay(IGameMonitorFormViewModel gameMonitorFormViewModel)
         {
             if (chooseGameDialog.ShowDialog() != DialogResult.OK)
                 return;
 
             if (gameMonitorFormViewModel.ShouldMonitor(chooseGameDialog.FileName))
             {
-                var display = new GameMonitorDisplay(chooseGameDialog.FileName, log);
+                var display = new GameMonitorDisplay(chooseGameDialog.FileName, logger);
                 mainPanel.Controls.Add(display);
             }
             else

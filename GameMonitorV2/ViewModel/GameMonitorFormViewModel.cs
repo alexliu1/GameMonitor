@@ -4,9 +4,8 @@ using log4net;
 
 namespace GameMonitorV2.ViewModel
 {
-    public class GameMonitorFormViewModel
+    public class GameMonitorFormViewModel : IGameMonitorFormViewModel
     {
-        public List<string> MonitoredFiles { get; set; }
         private ILog log;
 
         public GameMonitorFormViewModel(ILog log)
@@ -16,6 +15,8 @@ namespace GameMonitorV2.ViewModel
             MonitoredFiles = new List<string>();
         }
 
+        private List<string> MonitoredFiles { get; set; }
+
         public bool ShouldMonitor(string fileName)
         {
             if (MonitoredFiles.Any(monitoredFile => monitoredFile == fileName))
@@ -23,11 +24,9 @@ namespace GameMonitorV2.ViewModel
                 log.Debug(string.Format("Process [{0}] is already being monitored", fileName));
                 return false;
             }
-            else
-            {
-                MonitoredFiles.Add(fileName);
-                return true;
-            }
+            
+            MonitoredFiles.Add(fileName);
+            return true;
         }
     }
 }

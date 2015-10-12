@@ -52,12 +52,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ViewModel\IGameMonitorFormViewModel.cs" />
     <Compile Include="Model\PollWatcher.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel\GameMonitorDisplayViewModel.cs" />
-    <Compile Include="View\GameMonitorForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="View\GameMonitorForm.cs" />
     <Compile Include="View\GameMonitorForm.Designer.cs">
       <DependentUpon>GameMonitorForm.cs</DependentUpon>
     </Compile>
