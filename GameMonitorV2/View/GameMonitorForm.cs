@@ -17,16 +17,17 @@ namespace GameMonitorV2.View
         {
             InitializeComponent();
 
-            buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(viewModel);
+            //buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(viewModel);
         }
 
+       // public GameMonitorForm(IGameMonitorFormViewModel viewModel, Func<string, ILog, GameMonitorDisplay> gameMonitorDisplayFunc, Func<Type, ILog> loggerFactory) : this()
         public GameMonitorForm(IGameMonitorFormViewModel viewModel, Func<Type, ILog> loggerFactory) : this()
         {
             this.viewModel = viewModel;
             this.logger = loggerFactory(typeof(GameMonitorForm));
-            //var gameMonitorFormViewModel = new GameMonitorFormViewModel(GameMonitorForm.logger);
 
-            //buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(viewModel);
+            //had to move this: does Autofac use this constructor?
+            buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(viewModel);
         }
 
         private void LoadMonitoringDisplay(IGameMonitorFormViewModel gameMonitorFormViewModel)
@@ -36,7 +37,10 @@ namespace GameMonitorV2.View
 
             if (gameMonitorFormViewModel.ShouldMonitor(chooseGameDialog.FileName))
             {
-                var display = new GameMonitorDisplay(chooseGameDialog.FileName, logger);
+                // var display = gameMonitorDisplayFactory.Create(chooseGameDialog.FileName, loggerFactory); // factory
+                // var display = gameMonitorDisplayFactory(chooseGameDialog.FileName, loggerFactory); // func   
+                // var display = gameMonitorDisplayFactory(chooseGameDialog.FileName); // func  - better 
+                //var display = new GameMonitorDisplay(chooseGameDialog.FileName, logger);
                 mainPanel.Controls.Add(display);
             }
             else
