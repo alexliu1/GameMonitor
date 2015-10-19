@@ -23,6 +23,7 @@ namespace GameMonitorV2
             // Autofac registration
             var builder = new ContainerBuilder();
 
+            //builder.RegisterType<ILog>().As<ILog>();
             builder.Register<Func<Type, ILog>>(c => LogManager.GetLogger);
 
             builder.RegisterType<GameMonitorFormViewModel>().As<IGameMonitorFormViewModel>();
@@ -31,9 +32,15 @@ namespace GameMonitorV2
             var container = builder.Build();
 
             //// Resolve main form
-            var gameMonitorForm = container.Resolve<GameMonitorForm>();
-            Application.Run(gameMonitorForm);
-            
+            using (var scope = container.BeginLifetimeScope())
+            {
+                //var gameMonitorFormViewModel = scope.Resolve<GameMonitorFormViewModel>();
+                //var loggerFactory = scope.Resolve<Func<Type, ILog>>();
+                //var gameMonitorForm = container.Resolve<GameMonitorForm>(gameMonitorFormViewModel, loggerFactory);
+                var gameMonitorForm = container.Resolve<GameMonitorForm>();
+                Application.Run(gameMonitorForm);
+            }
+
             //Application.Run(new GameMonitorForm());
         }
     }

@@ -16,6 +16,8 @@ namespace GameMonitorV2.View
         public GameMonitorForm()
         {
             InitializeComponent();
+
+            buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(viewModel);
         }
 
         public GameMonitorForm(IGameMonitorFormViewModel viewModel, Func<Type, ILog> loggerFactory) : this()
@@ -24,7 +26,7 @@ namespace GameMonitorV2.View
             this.logger = loggerFactory(typeof(GameMonitorForm));
             //var gameMonitorFormViewModel = new GameMonitorFormViewModel(GameMonitorForm.logger);
 
-            buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(viewModel);
+            //buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(viewModel);
         }
 
         private void LoadMonitoringDisplay(IGameMonitorFormViewModel gameMonitorFormViewModel)

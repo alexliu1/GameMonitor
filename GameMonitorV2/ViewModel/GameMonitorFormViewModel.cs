@@ -1,16 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using GameMonitorV2.View;
 using log4net;
 
 namespace GameMonitorV2.ViewModel
 {
     public class GameMonitorFormViewModel : IGameMonitorFormViewModel
     {
-        private ILog log;
+        private ILog logger;
 
-        public GameMonitorFormViewModel(ILog log)
+        //public GameMonitorFormViewModel(ILog log)
+        //{
+        //    this.logger = log;
+
+        //    MonitoredFiles = new List<string>();
+        //}
+
+        public GameMonitorFormViewModel(Func<Type, ILog> loggerFactory)
         {
-            this.log = log;
+            this.logger = loggerFactory(typeof (GameMonitorFormViewModel));
 
             MonitoredFiles = new List<string>();
         }
@@ -21,7 +30,7 @@ namespace GameMonitorV2.ViewModel
         {
             if (MonitoredFiles.Any(monitoredFile => monitoredFile == fileName))
             {
-                log.Debug(string.Format("Process [{0}] is already being monitored", fileName));
+                logger.Debug(string.Format("Process [{0}] is already being monitored", fileName));
                 return false;
             }
             

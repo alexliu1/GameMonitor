@@ -1,4 +1,6 @@
-﻿namespace GameMonitorV2.ViewModel
+﻿using log4net;
+
+namespace GameMonitorV2.ViewModel
 {
     public interface IGameMonitorFormViewModel
     {
