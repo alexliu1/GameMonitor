@@ -15,10 +15,11 @@ namespace GameMonitorV2.ViewModel
         //private static TimeSpan TimeLimit = TimeSpan.FromHours(3);
         private static TimeSpan TimeLimit = TimeSpan.FromSeconds(10);
         public event Action TimeExpired; 
-        private readonly ISynchronizeInvoke synchronizeInvoke;
+        private ISynchronizeInvoke synchronizeInvoke;
         private string gameName;
         private TimeSpan elapsedTime;
-        private ILog log;
+        private ILog logger;
+        private readonly Func<string, PollWatcher> PollWatcherFactory;
 
         public string GameName
         {
@@ -41,14 +42,15 @@ namespace GameMonitorV2.ViewModel
                 elapsedTime = value;
                 OnPropertyChanged();
                 RaiseTimeExpiredIfNecessary(value);
-                log.Debug(string.Format("Process: [{0}] Running time: [{1}]", GameName, value));
+                logger.Debug(string.Format("Process: [{0}] Running time: [{1}]", GameName, value));
             }
         }
 
-        public GameMonitorDisplayViewModel(ISynchronizeInvoke synchronizeInvoke, string fileNameAndPath, ILog log)
+        public GameMonitorDisplayViewModel(Func<string, PollWatcher> PollWatcherFactory, ISynchronizeInvoke synchronizeInvoke, string fileNameAndPath, ILog logger)
         {
+            this.PollWatcherFactory = PollWatcherFactory;
             this.synchronizeInvoke = synchronizeInvoke;
-            this.log = log;
+            this.logger = logger;
 
             LoadGameToBeMonitored(fileNameAndPath);
         }
@@ -56,9 +58,10 @@ namespace GameMonitorV2.ViewModel
         private void LoadGameToBeMonitored(string fileNameAndPath)
         {
             GameName = Path.GetFileNameWithoutExtension(fileNameAndPath);
-            var watchingGame = new PollWatcher(GameName);
+            //var watchingGame = new PollWatcher(GameName);
+            var watchingGame = PollWatcherFactory(GameName);
             watchingGame.ElapsedTimeTick += () => { ElapsedTime = watchingGame.ElapsedTime; };
-            log.Info(string.Format("Monitoring process [{0}]", GameName));
+            logger.Info(string.Format("Monitoring process [{0}]", GameName));
         }
 
         private void RaiseTimeExpiredIfNecessary(TimeSpan value)
@@ -89,7 +92,7 @@ namespace GameMonitorV2.ViewModel
         {
             if (GameName == null) return;
             var program = Process.GetProcessesByName(GameName).First();
-            log.InfoFormat("Closing process [{0}]", GameName);
+            logger.InfoFormat("Closing process [{0}]", GameName);
 
             try
             {
@@ -97,7 +100,7 @@ namespace GameMonitorV2.ViewModel
             }
             catch (Exception ex)
             {
-                log.Error(string.Format("Error when closing [{0}]", GameName), ex);
+                logger.Error(string.Format("Error when closing [{0}]", GameName), ex);
             } 
         }
     }

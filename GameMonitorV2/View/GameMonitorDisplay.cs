@@ -1,6 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
+using GameMonitorV2.Model;
 using GameMonitorV2.ViewModel;
 using log4net;
 
@@ -9,21 +12,19 @@ namespace GameMonitorV2.View
     public partial class GameMonitorDisplay : UserControl
     {
         private bool soundPlayed ;
-        public string FileName { get; private set; }
         private ILog log;
+        private readonly GameMonitorDisplayViewModel viewModel;
 
-        public GameMonitorDisplay(string fileNameAndPath, ILog log)
+        public GameMonitorDisplay(Func<string, ISynchronizeInvoke, GameMonitorDisplayViewModel> viewModelFactory, string fileNameAndPath, ILog log)
         {
             this.log = log;
-            FileName = fileNameAndPath;
+            this.viewModel = viewModelFactory(fileNameAndPath, this);
 
             InitializeComponent();
 
-            var gameMonitorDisplayViewModel = new GameMonitorDisplayViewModel(this, fileNameAndPath, log);
-
-            BindLabelToProperties(gameMonitorDisplayViewModel);
-            SubscribeToTimeExpired(gameMonitorDisplayViewModel);
-            SubscribeToButtonCloseClick(gameMonitorDisplayViewModel);
+            BindLabelToProperties(viewModel);
+            SubscribeToTimeExpired(viewModel);
+            SubscribeToButtonCloseClick(viewModel);
         }
 
         private void SubscribeToTimeExpired(GameMonitorDisplayViewModel gameMonitorDisplayViewModel)
