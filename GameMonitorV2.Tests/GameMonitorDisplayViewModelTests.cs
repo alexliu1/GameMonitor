@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Threading;
 using GameMonitorV2.Tests.Fakes;
 using GameMonitorV2.ViewModel;
-using log4net;
 using Moq;
 using NUnit.Framework;
 
@@ -13,15 +12,13 @@ namespace GameMonitorV2.Tests
     [TestFixture]
     public class GameMonitorDisplayViewModelTests
     {
-        private ILog log = null;
-
         [Test]
         public void WhenGameNameIsSet_ThenPropertyChangedIsRaisedCorrectly_WhenInvokeIsRequired()
         {
             var propertyName = string.Empty;
             //var synchronizeInvoke = new FakeSynchronizeInvoke(true);
 
-            var unit = CreateUnit();
+            var unit = TestClassFactory.CreateGameMonitorDisplayViewModel();
             unit.PropertyChanged += (s,a) => { propertyName = a.PropertyName; };
             
             unit.GameName = "notepad";
@@ -37,7 +34,7 @@ namespace GameMonitorV2.Tests
             var propertyName = string.Empty;
             var synchronizeInvoke = new FakeSynchronizeInvoke(false);
             
-            var unit = CreateUnit(synchronizeInvoke, "notepad.exe", log);
+            var unit = TestClassFactory.CreateGameMonitorDisplayViewModel(synchronizeInvoke, "notepad.exe");
             unit.PropertyChanged += (s,a) => { propertyName = a.PropertyName; };
 
             foreach (var property in typeof(GameMonitorDisplayViewModel).GetProperties())
@@ -53,7 +50,7 @@ namespace GameMonitorV2.Tests
                 return 1;
             if (propertyType == typeof(string))
                 return "a";
-            if (propertyType == typeof(TimeSpan))
+            if (propertyType == typeof(System.TimeSpan))
                 return TimeSpan.FromSeconds(1);
             return null;
         }
@@ -65,7 +62,7 @@ namespace GameMonitorV2.Tests
             var iSynchronizeInvoke = new Mock<ISynchronizeInvoke>() { CallBase = true };
             iSynchronizeInvoke.Setup(m => m.InvokeRequired).Returns(false);
 
-            var unit = CreateUnit(iSynchronizeInvoke.Object, "notepad.exe", log);
+            var unit = TestClassFactory.CreateGameMonitorDisplayViewModel(iSynchronizeInvoke.Object, "notepad.exe");
             unit.TimeExpired += delegate { timeExpiredEventIsTriggered = true; };
             unit.ElapsedTime = TimeSpan.FromHours(3.017);  // time limit is hard-coded to 3 hours in GameMonitorDisplayViewModel
 
@@ -87,7 +84,7 @@ namespace GameMonitorV2.Tests
                 if (process == null)
                     Assert.Fail("Unable to start process [{0}]", processName);
 
-                var unit = CreateUnit(iSynchronizeInvoke.Object, processName, log);
+                var unit = TestClassFactory.CreateGameMonitorDisplayViewModel(iSynchronizeInvoke.Object, processName);
                 unit.CloseProgram();
                 Thread.Sleep(1000); //Give program time to exit
                 
@@ -99,20 +96,5 @@ namespace GameMonitorV2.Tests
                     process.Kill();
             }
         }
-
-        private GameMonitorDisplayViewModel CreateUnit(ISynchronizeInvoke synchronizeInvoke = null, string processName = null, ILog logger = null)
-        {
-            if (synchronizeInvoke == null)
-                synchronizeInvoke = new Mock<ISynchronizeInvoke>().Object;
-
-            if (processName == null)
-                processName = "notepad.exe";
-
-            if (logger == null)
-                logger = new Mock<ILog>().Object;
-
-            return new GameMonitorDisplayViewModel(synchronizeInvoke, processName, logger);
-        }
-
     }
 }

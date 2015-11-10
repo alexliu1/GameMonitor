@@ -19,7 +19,6 @@ namespace GameMonitorV2.ViewModel
         private string gameName;
         private TimeSpan elapsedTime;
         private ILog logger;
-        private readonly Func<string, PollWatcher> PollWatcherFactory;
 
         public string GameName
         {
@@ -46,20 +45,18 @@ namespace GameMonitorV2.ViewModel
             }
         }
 
-        public GameMonitorDisplayViewModel(Func<string, PollWatcher> PollWatcherFactory, ISynchronizeInvoke synchronizeInvoke, string fileNameAndPath, ILog logger)
+        public GameMonitorDisplayViewModel(ISynchronizeInvoke synchronizeInvoke, string fileNameAndPath, Func<Type, ILog> loggerFactory)
         {
-            this.PollWatcherFactory = PollWatcherFactory;
             this.synchronizeInvoke = synchronizeInvoke;
-            this.logger = logger;
+            logger = loggerFactory(typeof(GameMonitorDisplayViewModel));
 
-            LoadGameToBeMonitored(fileNameAndPath);
+            LoadGameToBeMonitored(fileNameAndPath, loggerFactory);
         }
 
-        private void LoadGameToBeMonitored(string fileNameAndPath)
+        private void LoadGameToBeMonitored(string fileNameAndPath, Func<Type, ILog> loggerFactory)
         {
             GameName = Path.GetFileNameWithoutExtension(fileNameAndPath);
-            //var watchingGame = new PollWatcher(GameName);
-            var watchingGame = PollWatcherFactory(GameName);
+            var watchingGame = ModelFactory.CreateNewPollWatcher(GameName, loggerFactory);
             watchingGame.ElapsedTimeTick += () => { ElapsedTime = watchingGame.ElapsedTime; };
             logger.Info(string.Format("Monitoring process [{0}]", GameName));
         }
@@ -91,11 +88,11 @@ namespace GameMonitorV2.ViewModel
         public void CloseProgram()
         {
             if (GameName == null) return;
-            var program = Process.GetProcessesByName(GameName).First();
             logger.InfoFormat("Closing process [{0}]", GameName);
 
             try
             {
+                var program = Process.GetProcessesByName(GameName).First();
                 program.Kill();
             }
             catch (Exception ex)

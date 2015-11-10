@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GameMonitorV2.View;
 using log4net;
 
 namespace GameMonitorV2.ViewModel
@@ -10,16 +9,9 @@ namespace GameMonitorV2.ViewModel
     {
         private ILog logger;
 
-        //public GameMonitorFormViewModel(ILog log)
-        //{
-        //    this.logger = log;
-
-        //    MonitoredFiles = new List<string>();
-        //}
-
         public GameMonitorFormViewModel(Func<Type, ILog> loggerFactory)
         {
-            this.logger = loggerFactory(typeof (GameMonitorFormViewModel));
+            logger = loggerFactory(typeof(GameMonitorFormViewModel));
 
             MonitoredFiles = new List<string>();
         }

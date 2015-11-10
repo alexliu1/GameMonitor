@@ -1,9 +1,7 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
-using GameMonitorV2.Model;
 using GameMonitorV2.ViewModel;
 using log4net;
 
@@ -12,13 +10,12 @@ namespace GameMonitorV2.View
     public partial class GameMonitorDisplay : UserControl
     {
         private bool soundPlayed ;
-        private ILog log;
-        private readonly GameMonitorDisplayViewModel viewModel;
+        private ILog logger;
 
-        public GameMonitorDisplay(Func<string, ISynchronizeInvoke, GameMonitorDisplayViewModel> viewModelFactory, string fileNameAndPath, ILog log)
+        public GameMonitorDisplay(string fileNameAndPath, Func<Type, ILog> loggerFactory)
         {
-            this.log = log;
-            this.viewModel = viewModelFactory(fileNameAndPath, this);
+            logger = loggerFactory(typeof(GameMonitorDisplay));
+            var viewModel = ViewModelFactory.CreateNewDisplayViewModel(this, fileNameAndPath, loggerFactory);
 
             InitializeComponent();
 
@@ -36,6 +33,7 @@ namespace GameMonitorV2.View
         {
             buttonClose.Click += (sender, args) =>
             {
+                logger.Debug("Close Program button is clicked.");
                 gameMonitorDisplayViewModel.CloseProgram();
                 ResetAttributes();
             };

@@ -2,20 +2,24 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Timers;
+using log4net;
 
 namespace GameMonitorV2.Model
 {
     public class PollWatcher
     {
-        private const int interval = 1 * 1000;
+        private const int Interval = 1 * 1000;
         public string ProcessName { get; private set; }
         private int elapsedTime;
+        private ILog logger;
 
-        public PollWatcher(string processName)
+        public PollWatcher(string processName, Func<Type, ILog> loggerFactory)
         {
+            logger = loggerFactory(typeof (PollWatcher));
             ProcessName = processName;
 
-            var timer = new Timer { Interval = interval };
+            var timer = new Timer { Interval = Interval };
+            logger.Info(string.Format("Timer is started with an interval of [{0}ms]", Interval));
             timer.Elapsed += UpdatedElapsedTime;
             timer.Start();
         }
@@ -28,9 +32,13 @@ namespace GameMonitorV2.Model
         private void UpdatedElapsedTime(object sender, EventArgs e)
         {
             if (!ProcessExists())
+            {
+                logger.Debug("Watched Program has ended.");
                 return;
+            }
 
-            elapsedTime += interval;
+            elapsedTime += Interval;
+            logger.Debug(string.Format("Program elapsed Time = {0}", elapsedTime));
 
             if (ElapsedTimeTick != null) ElapsedTimeTick();
         }

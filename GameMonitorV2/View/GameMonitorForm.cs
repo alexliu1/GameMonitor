@@ -7,9 +7,7 @@ namespace GameMonitorV2.View
 {
     public partial class GameMonitorForm : Form
     {
-        private readonly IGameMonitorFormViewModel viewModel;
         private readonly ILog logger;
-//        private readonly Func<string, GameMonitorDisplay> gameMonitorDisplayFactory; 
 
         //private static readonly log4net.ILog logger = log4net.LogManager.GetLogger
         //    (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -17,31 +15,33 @@ namespace GameMonitorV2.View
         public GameMonitorForm()
         {
             InitializeComponent();
-
-            //buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(viewModel);
         }
 
-        public GameMonitorForm(IGameMonitorFormViewModel viewModel, Func<string, GameMonitorDisplay> gameMonitorDisplayFactory, Func<Type, ILog> loggerFactory) : this()
+        public GameMonitorForm(Func<Type, ILog> loggerFactory) : this()
         {
-            this.viewModel = viewModel;
-            this.logger = loggerFactory(typeof(GameMonitorForm));
+            logger = loggerFactory(typeof(GameMonitorForm));
+            var viewModel = ViewModelFactory.CreateNewFormViewModel(loggerFactory);
 
-            //had to move this: does Autofac use this constructor?
-            buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(viewModel, gameMonitorDisplayFactory);
+            buttonLoadGame.Click += (sender, args) => LoadMonitoringDisplay(viewModel, loggerFactory);
         }
 
-        private void LoadMonitoringDisplay(IGameMonitorFormViewModel gameMonitorFormViewModel, Func<string, GameMonitorDisplay> gameMonitorDisplayFactory)
+        private void LoadMonitoringDisplay(GameMonitorFormViewModel gameMonitorFormViewModel, Func<Type, ILog> loggerFactory)
         {
             if (chooseGameDialog.ShowDialog() != DialogResult.OK)
+            {
+                logger.Debug("Browse File Dialog did not return Okay.");
                 return;
+            }
 
             if (gameMonitorFormViewModel.ShouldMonitor(chooseGameDialog.FileName))
             {
-                var display = gameMonitorDisplayFactory(chooseGameDialog.FileName);
+                logger.Debug("Adding a new Game Monitoring Display.");
+                var display = ViewFactory.CreateNewDisplay(chooseGameDialog.FileName, loggerFactory);
                 mainPanel.Controls.Add(display);
             }
             else
             {
+                logger.Debug("duplicate file name chosen.");
                 MessageBox.Show(@"Program is already being Monitored.");
             }
         }
