@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using GameMonitorV2.Model;
+using log4net;
+using Moq;
 using NUnit.Framework;
 
 namespace GameMonitorV2.Tests
@@ -9,10 +12,9 @@ namespace GameMonitorV2.Tests
     public class PollWatcherTests
     {
         [Test]
-        public void 
-            CanAccuratelyMeasureElapsedTimeOfTwoSequentialProcesses()
+        public void WhenTwoSequentialProcesses_ThenPollWatcherCanAccuratelyMeasureElapsedTimeOfBoth()
         {
-            var pollwatcher = TestClassFactory.CreatePollWatcher("notepad");
+            var pollwatcher = CreatePollWatcher("notepad");
             Process process = null;
             Process process2 = null;
 
@@ -25,7 +27,7 @@ namespace GameMonitorV2.Tests
                 Thread.Sleep(1000); //Give Windows 1 second to close notepad
 
                 process2 = Process.Start("notepad.exe");
-                Thread.Sleep(2100); //Give PollWatcher time to record next tick
+                Thread.Sleep(2100); //Give PollWatcher extra 100ms to record next tick
                 if (process2 != null) process2.Kill();
 
                 var actual = pollwatcher.ElapsedTime;
@@ -42,15 +44,15 @@ namespace GameMonitorV2.Tests
         }
 
         [Test]
-        public void CanMeasureAccuratelyElapsedTimeOfASingleProcess()
+        public void GivenASingleProcess_ThenPollWatcherCanMeasureAccuratelyElapsedTime()
         {
-            var pollwatcher = TestClassFactory.CreatePollWatcher("notepad");
+            var pollwatcher = CreatePollWatcher("notepad");
             Process process = null;
 
             try
             {
                 process = Process.Start("notepad.exe");
-                Thread.Sleep(3100); //Give PollWatcher time to record next tick
+                Thread.Sleep(3100); //Give PollWatcher 100ms to record next tick
                 if (process != null) process.Kill();
 
                 var actual = pollwatcher.ElapsedTime;
@@ -66,10 +68,10 @@ namespace GameMonitorV2.Tests
         }
 
         [Test]
-        public void CanMeasureElapsedTimeOfTwoConcurrentProcesses()
+        public void WhenThereAreTwoConcurrentProcesses_ThenPollWatcherCanMeasureElapsedTime()
         {
-            var pollwatcher1 = TestClassFactory.CreatePollWatcher("notepad");
-            var pollwatcher2 = TestClassFactory.CreatePollWatcher("wordpad");
+            var pollwatcher1 = CreatePollWatcher("notepad");
+            var pollwatcher2 = CreatePollWatcher("wordpad");
             Process process1 = null;
             Process process2 = null;
 
@@ -77,9 +79,9 @@ namespace GameMonitorV2.Tests
             {
                 process1 = Process.Start("notepad.exe");
                 process2 = Process.Start("wordpad.exe");
-                Thread.Sleep(3100);
+                Thread.Sleep(3100); //Give PollWatcher 100ms to record next tick
                 if (process1 != null) process1.Kill();
-                Thread.Sleep(2100); //Give PollWatcher time to record next tick
+                Thread.Sleep(2100); //Give PollWatcher 100ms to record next tick
                 if (process2 != null) process2.Kill();
 
                 var actual1 = pollwatcher1.ElapsedTime;
@@ -108,7 +110,15 @@ namespace GameMonitorV2.Tests
                 process.Kill();
         }
 
+        public static PollWatcher CreatePollWatcher(string gameName, Func<Type, ILog> loggerFactory = null)
+        {
+            if (gameName == null)
+                gameName = "notepad.exe";
 
-        
+            if (loggerFactory == null)
+                loggerFactory = type => new Mock<ILog>().Object;
+
+            return new PollWatcher(gameName, loggerFactory);
+        }
     }
 }

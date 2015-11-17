@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using GameMonitorV2.Annotations;
 using GameMonitorV2.Model;
 using log4net;
 
@@ -12,13 +13,12 @@ namespace GameMonitorV2.ViewModel
 {
     public class GameMonitorDisplayViewModel : INotifyPropertyChanged
     {
-        //private static TimeSpan TimeLimit = TimeSpan.FromHours(3);
-        private static TimeSpan TimeLimit = TimeSpan.FromSeconds(10);
+        private static readonly TimeSpan TimeLimit = TimeSpan.FromHours(3);
         public event Action TimeExpired; 
-        private ISynchronizeInvoke synchronizeInvoke;
+        private readonly ISynchronizeInvoke synchronizeInvoke;
         private string gameName;
         private TimeSpan elapsedTime;
-        private ILog logger;
+        private readonly ILog logger;
 
         public string GameName
         {
@@ -45,20 +45,20 @@ namespace GameMonitorV2.ViewModel
             }
         }
 
-        public GameMonitorDisplayViewModel(ISynchronizeInvoke synchronizeInvoke, string fileNameAndPath, Func<Type, ILog> loggerFactory)
+        public GameMonitorDisplayViewModel(ISynchronizeInvoke synchronizeInvoke, string fileNameAndPath, PollWatcherFactory pollWatcherFactory, Func<Type, ILog> loggerFactory)
         {
             this.synchronizeInvoke = synchronizeInvoke;
             logger = loggerFactory(typeof(GameMonitorDisplayViewModel));
 
-            LoadGameToBeMonitored(fileNameAndPath, loggerFactory);
+            LoadGameToBeMonitored(fileNameAndPath, pollWatcherFactory);
         }
 
-        private void LoadGameToBeMonitored(string fileNameAndPath, Func<Type, ILog> loggerFactory)
+        private void LoadGameToBeMonitored(string fileNameAndPath, PollWatcherFactory pollWatcherFactory)
         {
             GameName = Path.GetFileNameWithoutExtension(fileNameAndPath);
-            var watchingGame = ModelFactory.CreateNewPollWatcher(GameName, loggerFactory);
-            watchingGame.ElapsedTimeTick += () => { ElapsedTime = watchingGame.ElapsedTime; };
             logger.Info(string.Format("Monitoring process [{0}]", GameName));
+            var watchingGame = pollWatcherFactory.CreateNewPollWatcher(GameName);
+            watchingGame.ElapsedTimeTick += () => { ElapsedTime = watchingGame.ElapsedTime; };
         }
 
         private void RaiseTimeExpiredIfNecessary(TimeSpan value)
@@ -69,7 +69,7 @@ namespace GameMonitorV2.ViewModel
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-        //[NotifyPropertyChangedInvocator]
+        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             MethodInvoker methodToRaise = () => PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
@@ -84,7 +84,6 @@ namespace GameMonitorV2.ViewModel
                 methodToRaise();
         }
 
-        //public bool TryCloseProgram(out string errorMessage)
         public void CloseProgram()
         {
             if (GameName == null) return;

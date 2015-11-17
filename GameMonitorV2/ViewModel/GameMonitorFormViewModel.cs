@@ -5,9 +5,9 @@ using log4net;
 
 namespace GameMonitorV2.ViewModel
 {
-    public class GameMonitorFormViewModel : IGameMonitorFormViewModel
+    public class GameMonitorFormViewModel
     {
-        private ILog logger;
+        private readonly ILog logger;
 
         public GameMonitorFormViewModel(Func<Type, ILog> loggerFactory)
         {
@@ -16,7 +16,7 @@ namespace GameMonitorV2.ViewModel
             MonitoredFiles = new List<string>();
         }
 
-        private List<string> MonitoredFiles { get; set; }
+        private List<string> MonitoredFiles { get; }
 
         public bool ShouldMonitor(string fileName)
         {

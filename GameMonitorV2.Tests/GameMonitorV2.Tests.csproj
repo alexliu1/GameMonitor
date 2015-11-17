@@ -50,11 +50,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fakes\FakeSynchronizeInvoke.cs" />
+    <Compile Include="GameMonitorDisplayViewModelFactoryTests.cs" />
+    <Compile Include="PollWatcherFactoryTests.cs" />
+    <Compile Include="GameMonitorFormViewModelFactoryTests.cs" />
     <Compile Include="GameMonitorDisplayViewModelTests.cs" />
+    <Compile Include="GameMonitorDisplayFactoryTests.cs" />
     <Compile Include="GameMonitorFormViewModelTests.cs" />
     <Compile Include="PollWatcherTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestClassFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

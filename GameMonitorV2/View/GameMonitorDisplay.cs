@@ -10,12 +10,12 @@ namespace GameMonitorV2.View
     public partial class GameMonitorDisplay : UserControl
     {
         private bool soundPlayed ;
-        private ILog logger;
+        private readonly ILog logger;
 
-        public GameMonitorDisplay(string fileNameAndPath, Func<Type, ILog> loggerFactory)
+        public GameMonitorDisplay(string fileNameAndPath, GMDViewModelFactory gMDViewModelFactory, Func<Type, ILog> loggerFactory)
         {
             logger = loggerFactory(typeof(GameMonitorDisplay));
-            var viewModel = ViewModelFactory.CreateNewDisplayViewModel(this, fileNameAndPath, loggerFactory);
+            var viewModel = gMDViewModelFactory.CreateNewDisplayViewModel(this, fileNameAndPath);
 
             InitializeComponent();
 

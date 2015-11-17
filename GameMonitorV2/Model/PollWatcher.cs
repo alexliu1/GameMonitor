@@ -11,7 +11,7 @@ namespace GameMonitorV2.Model
         private const int Interval = 1 * 1000;
         public string ProcessName { get; private set; }
         private int elapsedTime;
-        private ILog logger;
+        private readonly ILog logger;
 
         public PollWatcher(string processName, Func<Type, ILog> loggerFactory)
         {

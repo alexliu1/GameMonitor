@@ -1,11 +1,7 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Windows.Forms;
 using Autofac;
-using GameMonitorV2.Model;
 using GameMonitorV2.View;
-using GameMonitorV2.ViewModel;
-using log4net;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -15,6 +11,10 @@ namespace GameMonitorV2
     {
         /// <summary>
         /// The main entry point for the application.
+        /// User click "Browse" to find a game or program to monitor.
+        /// Application will monitor the elapsed run time of the selected game or program.
+        /// Once the game or program has exceeded the pre-determined limit (3 hours), it will give a
+        /// warning and allow the user to shut down the game or program.
         /// </summary>
         [STAThread]
         static void Main()
@@ -22,46 +22,9 @@ namespace GameMonitorV2
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // Autofac registration
+            // Autofac registration for Dependency Injection
             var builder = new ContainerBuilder();
-
-            builder.Register<Func<Type, ILog>>(c => LogManager.GetLogger);
-            
-            builder.Register(c =>
-            {
-                var loggerFactory = c.Resolve<Func<Type, ILog>>();
-                //var gameDisplayFactory = c.Resolve<Func<string, GameMonitorDisplay>>();
-                //var viewModel = c.Resolve<IGameMonitorFormViewModel>();
-                return new GameMonitorForm(/*viewModel, gameDisplayFactory, */loggerFactory);
-
-            }).As<GameMonitorForm>();
-
-            //builder.RegisterType<GameMonitorFormViewModel>().As<IGameMonitorFormViewModel>();
-
-            //builder.Register<Func<string, GameMonitorDisplay>>(c =>
-            //{
-            //    var context = c.Resolve<IComponentContext>();
-            //    return fileName =>
-            //    {
-            //        var loggerFactory = context.Resolve<Func<Type, ILog>>();
-            //        var logger = loggerFactory(typeof (GameMonitorDisplay));
-            //        //var viewModelFactory = context.Resolve<Func<string, ISynchronizeInvoke, GameMonitorDisplayViewModel>>();
-            //        return new GameMonitorDisplay(/*viewModelFactory, */fileName, logger);
-            //    };
-            //});
-
-            //builder.Register<Func<string, ISynchronizeInvoke, GameMonitorDisplayViewModel>>(c =>
-            //{
-            //    var context = c.Resolve<IComponentContext>();
-            //    return (fileName, synchronizeInvoke ) =>
-            //    {
-            //        var loggerFactory = context.Resolve<Func<Type, ILog>>();
-            //        var logger = loggerFactory(typeof(GameMonitorDisplayViewModel));
-            //        var pollWatchFactory = context.Resolve<Func<string, PollWatcher>>();
-            //        return new GameMonitorDisplayViewModel(pollWatchFactory, synchronizeInvoke, fileName, logger);
-            //    };
-            //});
-            
+            builder.RegisterModule(new GameMonitorModule());
             var container = builder.Build();
 
             var gameMonitorForm = container.Resolve<GameMonitorForm>();
