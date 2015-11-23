@@ -16,14 +16,15 @@ namespace GameMonitorV2.Tests
             var formViewModel = unit.CreateNewFormViewModel();
 
             Assert.IsTrue(formViewModel.GetType() == typeof(GameMonitorFormViewModel));
+            Assert.IsTrue(formViewModel != null);
         }
 
-        private GMFViewModelFactory CreateUnit(Func<Type, ILog> loggerFactory = null)
+        private GameModelFormViewModelFactory CreateUnit(Func<Type, ILog> loggerFactory = null)
         {
             if (loggerFactory == null)
                 loggerFactory = type => new Mock<ILog>().Object;
 
-            return new GMFViewModelFactory(loggerFactory);
+            return new GameModelFormViewModelFactory(loggerFactory);
         }
     }
 }

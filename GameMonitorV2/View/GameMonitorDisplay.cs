@@ -12,7 +12,7 @@ namespace GameMonitorV2.View
         private bool soundPlayed ;
         private readonly ILog logger;
 
-        public GameMonitorDisplay(string fileNameAndPath, GMDViewModelFactory gMDViewModelFactory, Func<Type, ILog> loggerFactory)
+        public GameMonitorDisplay(string fileNameAndPath, GameModelDisplayViewModelFactory gMDViewModelFactory, Func<Type, ILog> loggerFactory)
         {
             logger = loggerFactory(typeof(GameMonitorDisplay));
             var viewModel = gMDViewModelFactory.CreateNewDisplayViewModel(this, fileNameAndPath);

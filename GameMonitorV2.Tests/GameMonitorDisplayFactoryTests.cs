@@ -18,9 +18,10 @@ namespace GameMonitorV2.Tests
             var newDisplay = unit.CreateNewDisplay("notepad.exe");
 
             Assert.IsTrue(newDisplay.GetType() == typeof(GameMonitorDisplay));
+            Assert.IsTrue(newDisplay != null);
         }
 
-        private GameMonitorDisplayFactory CreateUnit(GMDViewModelFactory gameMonitorDisplayViewModelFactory = null, Func<Type, ILog> loggerFactory = null)
+        private GameMonitorDisplayFactory CreateUnit(GameModelDisplayViewModelFactory gameMonitorDisplayViewModelFactory = null, Func<Type, ILog> loggerFactory = null)
         {
             if (loggerFactory == null)
                 loggerFactory = type => new Mock<ILog>().Object;
@@ -28,7 +29,7 @@ namespace GameMonitorV2.Tests
             if (gameMonitorDisplayViewModelFactory == null)
             {
                 var pollWatcherFactory = new PollWatcherFactory(loggerFactory);
-                gameMonitorDisplayViewModelFactory = new GMDViewModelFactory(pollWatcherFactory, loggerFactory);
+                gameMonitorDisplayViewModelFactory = new GameModelDisplayViewModelFactory(pollWatcherFactory, loggerFactory);
             }
 
             return new GameMonitorDisplayFactory(gameMonitorDisplayViewModelFactory, loggerFactory);

@@ -7,9 +7,9 @@ namespace GameMonitorV2.View
     public class GameMonitorDisplayFactory
     {
         private readonly Func<Type, ILog> loggerFactory;
-        private readonly GMDViewModelFactory gameMonitorDisplayViewModelFactory;
+        private readonly GameModelDisplayViewModelFactory gameMonitorDisplayViewModelFactory;
 
-        public GameMonitorDisplayFactory(GMDViewModelFactory gameMonitorDisplayViewModelFactory, Func<Type, ILog> loggerFactory)
+        public GameMonitorDisplayFactory(GameModelDisplayViewModelFactory gameMonitorDisplayViewModelFactory, Func<Type, ILog> loggerFactory)
         {
             this.loggerFactory = loggerFactory;
             this.gameMonitorDisplayViewModelFactory = gameMonitorDisplayViewModelFactory;

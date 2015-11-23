@@ -5,12 +5,12 @@ using log4net;
 
 namespace GameMonitorV2.ViewModel
 {
-    public class GMDViewModelFactory
+    public class GameModelDisplayViewModelFactory
     {
         private readonly Func<Type, ILog> loggerFactory;
         private readonly PollWatcherFactory pollWatcherFactory;
 
-        public GMDViewModelFactory(PollWatcherFactory pollWatcherFactory, Func<Type, ILog> loggerFactory)
+        public GameModelDisplayViewModelFactory(PollWatcherFactory pollWatcherFactory, Func<Type, ILog> loggerFactory)
         {
             this.loggerFactory = loggerFactory;
             this.pollWatcherFactory = pollWatcherFactory;

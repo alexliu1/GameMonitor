@@ -23,9 +23,10 @@ namespace GameMonitorV2.Tests
             var displayViewModel = unit.CreateNewDisplayViewModel(synchronizeInvoke, processName);
 
             Assert.IsTrue(displayViewModel.GetType() == typeof(GameMonitorDisplayViewModel));
+            Assert.IsTrue(displayViewModel != null);
         }
 
-        private GMDViewModelFactory CreateUnit(PollWatcherFactory pollWatcherFactory = null, Func<Type, ILog> loggerFactory = null)
+        private GameModelDisplayViewModelFactory CreateUnit(PollWatcherFactory pollWatcherFactory = null, Func<Type, ILog> loggerFactory = null)
         {
             if (loggerFactory == null)
                 loggerFactory = type => new Mock<ILog>().Object;
@@ -33,7 +34,7 @@ namespace GameMonitorV2.Tests
             if (pollWatcherFactory == null)
                 pollWatcherFactory = new PollWatcherFactory(loggerFactory);
 
-            return new GMDViewModelFactory(pollWatcherFactory, loggerFactory);
+            return new GameModelDisplayViewModelFactory(pollWatcherFactory, loggerFactory);
         }
     }
 }

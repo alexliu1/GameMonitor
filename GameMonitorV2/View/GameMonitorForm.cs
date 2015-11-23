@@ -14,7 +14,7 @@ namespace GameMonitorV2.View
             InitializeComponent();
         }
 
-        public GameMonitorForm(GMFViewModelFactory gMFVMFactory, GameMonitorDisplayFactory gameMonitorDisplayFactory, Func<Type, ILog> loggerFactory) : this()
+        public GameMonitorForm(GameModelFormViewModelFactory gMFVMFactory, GameMonitorDisplayFactory gameMonitorDisplayFactory, Func<Type, ILog> loggerFactory) : this()
         {
             logger = loggerFactory(typeof(GameMonitorForm));
             var viewModel = gMFVMFactory.CreateNewFormViewModel();

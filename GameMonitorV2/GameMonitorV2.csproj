@@ -52,13 +52,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameMonitorModule.cs" />
+    <Compile Include="AutofacModule\ModelModule.cs" />
+    <Compile Include="AutofacModule\ViewModule.cs" />
+    <Compile Include="AutofacModule\ViewModelModule.cs" />
     <Compile Include="Model\PollWatcherFactory.cs" />
     <Compile Include="Model\PollWatcher.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel\GameMonitorDisplayViewModel.cs" />
-    <Compile Include="ViewModel\GMDViewModelFactory.cs" />
-    <Compile Include="ViewModel\GMFViewModelFactory.cs" />
+    <Compile Include="ViewModel\GameModelDisplayViewModelFactory.cs" />
+    <Compile Include="ViewModel\GameModelFormViewModelFactory.cs" />
     <Compile Include="View\GameMonitorForm.cs">
       <SubType>Form</SubType>
     </Compile>

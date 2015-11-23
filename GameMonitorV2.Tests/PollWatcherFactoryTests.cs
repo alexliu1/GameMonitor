@@ -16,6 +16,7 @@ namespace GameMonitorV2.Tests
             var pollWatcher = unit.CreateNewPollWatcher("notepad");
 
             Assert.IsTrue(pollWatcher.GetType() == typeof(PollWatcher));
+            Assert.IsTrue(pollWatcher != null);
         }
 
         private PollWatcherFactory CreateUnit(Func<Type, ILog> loggerFactory = null)
